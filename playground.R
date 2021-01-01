@@ -1,6 +1,8 @@
 
 library(tidyverse)
 
+### Initial investigations -----
+
 # get coastline
 world_coastline <- rnaturalearth::ne_coastline(scale = 10, returnclass = "sf")
 
@@ -54,3 +56,43 @@ ggplot() +
   geom_sf(data = nearest_coast, colour = "red") +
   xlim(-3.4, -2.8) +
   ylim(56.3, 56.5)
+
+
+### Tweet 2: DfT NaPTAN/NPTG data
+
+# download NAPTAN data
+naptan_url <- "https://naptan.app.dft.gov.uk/DataRequest/Naptan.ashx?format=csv"
+dest_file <- paste0("data/source/naptan/naptan", Sys.Date(), "_download.zip")
+unzip_loc <- paste0("data/source/naptan/", gsub(".zip", "", basename(dest_file)))
+dir.create(unzip_loc)
+
+download.file(naptan_url, dest_file)
+unzip(dest_file, exdir = unzip_loc)
+
+stops <- read_csv(paste0(unzip_loc, "/Stops.csv"), 
+                  col_types = cols(.default = col_character()))
+stops_in_area <- read_csv(paste0(unzip_loc, "/StopsInArea.csv"), 
+                          col_types = cols(.default = col_character()))
+rail_ref <- read_csv(paste0(unzip_loc, "/RailReferences.csv"), 
+                     col_types = cols(.default = col_character()))
+metro_ref <- read_csv(paste0(unzip_loc, "/MetroReferences.csv"), 
+                      col_types = cols(.default = col_character()))
+
+stop_types <- read_csv("data/source/naptan/stop_types.csv")
+
+live_stops <- stops %>%
+  janitor::clean_names() %>%
+  filter(status == "act") %>%
+  select(atco_code, naptan_code, common_name, street, locality_name,
+         parent_locality_name, nptg_locality_code, longitude, latitude, stop_type) %>%
+  left_join(stop_types, by = c("stop_type" = "type")) %>%
+  filter(open_access)
+
+rail_metro <- live_stops %>%
+  filter(mode == "rail" | mode == "metro")
+
+air_ferry <- live_stops %>%
+  filter(mode == "air" | mode == "ferry")
+
+bus_stops <- live_stops %>%
+  filter(mode == "bus")
