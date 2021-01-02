@@ -15,7 +15,10 @@
 - [ ] write script for tweeting
 - [ ] write GH Action workflow for automation
 
-### Tweet strategy
+#### Latest test plot
+![test plot](imgs/bus_rail_geo_test.png)
+
+## Tweet strategy
 
 Others in the mapbotverse select a position at random each time they tweeet. `londomapbot` generates a random latitude and longitude within a bounding box that contains the M25 and tweets an aerial photo of the location along with an OSM link. `narrowbotr` picks a random location from a list of canal features, it also searches flickr for photos close to the location, if no flickr photo is found it too uses an aerial photo of the location.
 
@@ -40,6 +43,27 @@ Use Mapbox as per standard mapbots
 #### Tweet 2: nearest public transport
 Use [DfT NaPTAN/NPTG](https://naptan.app.dft.gov.uk) data/service.
 
+- [x] download NaPTAN data
+- [x] explore data
+- [x] clean bus stop names
+- [x] convert bus stops to {sf} object
+- [x] convert railways to {sf} object
+- [x] test plotting of bus/rail {sf} objects
+- [ ] test nearest bus/rail selection
+- [ ] build dataset of other transport facilities
+- [ ] test nearest other transport selection
+
+Test plot (starting at first point of Natural Earth GB coastline: 3.32346 West, 56.36586 North, mouth of the River Tay, SE of Perth):
+![test plot](imgs/bus_rail_geo_test.png)
+
+- Natural Earth coatline in light grey
+- Simplified coastline in blue (i.e. computational walking path)
+- First 20 points of real coast (converted to line) in black
+- Sequential points on computational path in blue
+- Nearest real coastline points in red
+- NaPTAN objects as triangles: bus stops in green, railway stations in blue
+
+
 #### Tweet 3: aerial photo
 Use Mapbox as per standard mapbots
 
@@ -57,7 +81,7 @@ The Royal National Lifeboat Institution is a charity that operates lifeboat and 
 #### Tweet 7: Flickr photo
 Use Flickr API as per `narrowbotR`
 
-### Tweet 8: Nearest non-GB location
+#### Tweet 8: Nearest non-GB location
 Use `sf::st_nearest_point()` to find nearest point on non-GB location. Consider excluding Scottish Islands?
 
 #### Tweet 9: Local politicians
