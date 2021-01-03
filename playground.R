@@ -10,7 +10,7 @@ world_polygons <- world_coastline %>%
   sf::st_polygonize()
 
 # London is roughly at 0ºE 51.5ºN
-gb_ref_point <- sf::st_sfc(sf::st_point(x = c(0, 51.5), dim = "XY"), crs = "WGS84")
+gb_ref_point <- sf::st_sfc(sf::st_point(x = c(-0.12768, 51.50739), dim = "XY"), crs = "WGS84")
 
 # extract gb coastline as corresponding linestring of the polygon 
 # containing London
